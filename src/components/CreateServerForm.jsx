@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { apiCall } from '../lib/api';
 
 const CreateServerForm = ({ onServerCreated }) => {
   const [loading, setLoading] = useState(false);
@@ -78,10 +79,9 @@ const CreateServerForm = ({ onServerCreated }) => {
       };
 
       // Send POST request to backend
-      const response = await fetch('http://localhost:5000/api/servers', {
+      const response = await apiCall('/api/servers', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)

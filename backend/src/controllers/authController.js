@@ -108,4 +108,53 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+/**
+ * Test login - creates/gets a test account for quick testing
+ * POST /api/auth/test-login
+ * No authentication required
+ */
+const testLogin = async (req, res) => {
+  try {
+    const testEmail = 'test@lighth.io';
+    const testPassword = 'test123456';
+    const testUsername = 'testuser';
+
+    // Try to find existing test user
+    let user = await prisma.user.findUnique({
+      where: { email: testEmail },
+    });
+
+    // If doesn't exist, create it
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(testPassword, 10);
+      user = await prisma.user.create({
+        data: {
+          email: testEmail,
+          username: testUsername,
+          password: hashedPassword,
+          role: 'user',
+        },
+      });
+      console.log('[Test Account] Created test user:', testEmail);
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(200).json({
+      message: 'Test login successful',
+      token,
+      user: { id: user.id, email: user.email, username: user.username, role: user.role },
+      note: 'Test credentials: test@lighth.io / test123456'
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error during test login' });
+  }
+};
+
+module.exports = { register, login, testLogin };

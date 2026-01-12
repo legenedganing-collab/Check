@@ -1,23 +1,39 @@
-export default {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
-    "./src/**/*.{js,jsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        gray: {
-          950: '#030712',
-          900: '#0f172a',
-          800: '#1e293b',
-          700: '#334155',
-          600: '#475569',
-          500: '#64748b',
-          400: '#94a3b8',
-          300: '#cbd5e1',
-          200: '#e2e8f0',
-          100: '#f1f5f9',
+        // The deep background shades
+        brand: {
+          darkest: '#070a13',
+          darker: '#0f172a',
+          card: '#1e293b',
+          border: '#334155',
+        },
+        // Action colors (Apex-style Purple)
+        accent: {
+          light: '#c084fc',
+          DEFAULT: '#a855f7',
+          dark: '#7e22ce',
+          glow: 'rgba(168, 85, 247, 0.4)',
+        },
+        // Status colors
+        status: {
+          online: '#10b981',
+          offline: '#ef4444',
+          starting: '#f59e0b',
         }
-      }
+      },
+      boxShadow: {
+        'glow': '0 0 20px -5px rgba(168, 85, 247, 0.4)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
     },
   },
   plugins: [],

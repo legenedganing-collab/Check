@@ -1,12 +1,14 @@
 const { PrismaClient } = require('@prisma/client');
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs').promises;
+const path = require('path');
 const { provisionServer } = require('../../lib/provisioning');
 const {
   launchMinecraftServer,
   getServerStatus,
   stopServer,
   restartServer,
-  deleteServer,
+  deleteServer: deleteDockerServer,
   getServerLogs,
   checkDockerHealth
 } = require('../../lib/dockerProvisioner');
@@ -331,11 +333,11 @@ const deleteServer = async (req, res) => {
           .replace(/[^a-z0-9\-]/gi, '')
           .toLowerCase()}`;
         
-        await stopServer(containerName);
-        console.log(`[Server Deletion] Container stopped`);
+        await deleteDockerServer(containerName);
+        console.log(`[Server Deletion] Container deleted`);
       } catch (dockerError) {
-        console.warn(`[Server Deletion] Could not stop Docker container:`, dockerError.message);
-        // Continue with deletion even if Docker stop fails
+        console.warn(`[Server Deletion] Could not delete Docker container:`, dockerError.message);
+        // Continue with deletion even if Docker delete fails
       }
     }
 
@@ -733,4 +735,94 @@ module.exports = {
   getServerConsoleLogs,
   checkDocker,
   powerControl,
+  getServerFiles,
 };
+
+/**
+ * Get files from a server's directory (for file manager)
+ * GET /api/servers/:id/files?path=/plugins
+ * Requires: JWT token in Authorization header
+ * 
+ * Returns: List of files with icons and metadata
+ */
+async function getServerFiles(req, res) {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+    const { path: subPath = '' } = req.query;
+
+    // Verify server exists and belongs to user
+    const server = await prisma.server.findFirst({
+      where: {
+        id: parseInt(id),
+        userId,
+      },
+    });
+
+    if (!server) {
+      return res.status(404).json({ message: 'Server not found' });
+    }
+
+    // Security: prevent directory traversal attacks
+    if (subPath && (subPath.includes('..') || subPath.startsWith('/'))) {
+      return res.status(400).json({ message: 'Invalid path' });
+    }
+
+    // Base path for server data (from dockerProvisioner)
+    const DATA_BASE_PATH = process.env.LIGHTH_DATA_PATH || '/var/lib/lighth/data';
+    const rootPath = path.join(DATA_BASE_PATH, server.id.toString());
+    const targetPath = path.join(rootPath, subPath || '');
+
+    // Ensure target path is within root path (prevent escape)
+    if (!targetPath.startsWith(rootPath)) {
+      return res.status(400).json({ message: 'Invalid path' });
+    }
+
+    try {
+      const entries = await fs.readdir(targetPath, { withFileTypes: true });
+
+      const files = entries.map(entry => {
+        const extension = path.extname(entry.name).toLowerCase();
+        let type = 'file';
+
+        if (entry.isDirectory()) {
+          type = 'folder';
+        } else if (['.yml', '.yaml', '.properties', '.conf'].includes(extension)) {
+          type = 'config';
+        } else if (extension === '.json') {
+          type = 'json';
+        } else if (['.jar', '.zip'].includes(extension)) {
+          type = 'archive';
+        } else if (['.log', '.txt'].includes(extension)) {
+          type = 'text';
+        }
+
+        return {
+          name: entry.name,
+          type,
+          extension,
+          isDirectory: entry.isDirectory()
+        };
+      });
+
+      res.status(200).json({
+        message: 'Files retrieved successfully',
+        path: subPath || '/',
+        files: files.sort((a, b) => {
+          // Folders first, then alphabetical
+          if (a.isDirectory && !b.isDirectory) return -1;
+          if (!a.isDirectory && b.isDirectory) return 1;
+          return a.name.localeCompare(b.name);
+        })
+      });
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        return res.status(404).json({ message: 'Directory not found' });
+      }
+      throw err;
+    }
+  } catch (error) {
+    console.error('[Get Files Error]', error.message);
+    res.status(500).json({ message: 'Error retrieving files: ' + error.message });
+  }
+}

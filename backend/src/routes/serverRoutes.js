@@ -12,6 +12,7 @@ const {
   getServerConsoleLogs,
   checkDocker,
   powerControl,
+  getServerFiles,
 } = require('../controllers/serverController');
 
 const router = express.Router();
@@ -88,6 +89,14 @@ router.get('/:id/logs', getServerConsoleLogs);
  * Body: { action: 'start' | 'stop' | 'restart' | 'kill' }
  */
 router.post('/:id/power', powerControl);
+
+/**
+ * GET /api/servers/:id/files
+ * Get file listing from server's directory (for file manager)
+ * Query params:
+ * - path=/plugins (default: /) - Get files in specific directory
+ */
+router.get('/:id/files', getServerFiles);
 
 module.exports = router;
 

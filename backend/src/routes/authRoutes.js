@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login } = require('../controllers/authController');
+const { register, login, testLogin } = require('../controllers/authController');
 const { checkDocker } = require('../controllers/serverController');
 
 const router = express.Router();
@@ -18,6 +18,13 @@ router.post('/register', register);
  * Returns: JWT token
  */
 router.post('/login', login);
+
+/**
+ * POST /api/auth/test-login
+ * Quick test login with demo account
+ * No authentication required - for testing purposes
+ */
+router.post('/test-login', testLogin);
 
 /**
  * GET /api/health/docker
