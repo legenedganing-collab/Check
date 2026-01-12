@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-azuretools.vscode-docker",
+    "bmewburn.vscode-intelephense-client",
+    "golang.go",
+    "rangav.vscode-thunder-client",
+    "redhat.vscode-yaml",
+    "bradlc.vscode-tailwindcss",
+    "usernamehw.errorlens",
+    "eamodio.gitlens"
+  ]
+}
