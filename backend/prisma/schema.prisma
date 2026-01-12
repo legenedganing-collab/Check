@@ -1,0 +1,52 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Model - Stores user authentication and role information
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String  // Hashed password
+  username  String  @unique
+  role      String  @default("user") // "admin" or "user"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship: A user can own many servers
+  servers   Server[]
+
+  @@map("users")
+}
+
+// Server Model - Stores Minecraft server information
+model Server {
+  id          Int     @id @default(autoincrement())
+  name        String
+  uuid        String  @unique
+  ipAddress   String
+  port        Int     @unique // UNIQUE ensures no duplicate port assignments (crucial for multi-server setup)
+  memory      Int     // RAM in MB
+  diskSpace   Int     // Disk space in GB
+  status      String  @default("provisioning") // "provisioning", "online", or "offline"
+  
+  // RCON (Remote Console) access credentials
+  // Generated during provisioning, used for server command execution
+  rconPassword String?  // Optional: only populated after successful provisioning
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign key: Link server to owner
+  userId      Int
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("servers")
+}
