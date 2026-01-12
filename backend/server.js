@@ -11,10 +11,25 @@ const PORT = process.env.PORT || 5000;
 const SOCKET_PORT = process.env.SOCKET_PORT || 3002;
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow localhost
+    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      callback(null, true);
+    } 
+    // Allow codespace domains (ends with .app.github.dev)
+    else if (origin && origin.includes('.app.github.dev')) {
+      callback(null, true);
+    }
+    // Allow any origin in development (can be restricted in production)
+    else {
+      callback(null, true);
+    }
+  },
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -51,10 +66,10 @@ const io = initSocketServer(httpServer);
 console.log('[Socket.io] WebSocket server initialized');
 
 // Start HTTP + WebSocket server
-httpServer.listen(SOCKET_PORT, () => {
+httpServer.listen(SOCKET_PORT, '0.0.0.0', () => {
   console.log(`\n🚀 Lighth Backend Server is running`);
-  console.log(`📡 HTTP Server: http://localhost:${SOCKET_PORT}`);
-  console.log(`🔌 WebSocket Server: ws://localhost:${SOCKET_PORT}\n`);
+  console.log(`📡 HTTP Server: http://0.0.0.0:${SOCKET_PORT}`);
+  console.log(`🔌 WebSocket Server: ws://0.0.0.0:${SOCKET_PORT}\n`);
   
   console.log(`📚 API Documentation:`);
   console.log(`   - POST   /api/auth/register         - Register a new user`);

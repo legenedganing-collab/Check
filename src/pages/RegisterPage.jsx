@@ -115,7 +115,7 @@ export default function RegisterPage() {
                   value={form.username}
                   onChange={handleChange}
                   placeholder="yourname"
-                  className={`w-full bg-brand.card border rounded-lg p-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 ${
+                  className={`w-full bg-white border rounded-lg p-3 pl-10 text-black placeholder-slate-400 focus:outline-none focus:ring-2 ${
                     errors.username ? 'border-red-500 focus:ring-red-500' : 'border-brand.border focus:ring-accent'
                   }`}
                 />
@@ -138,7 +138,7 @@ export default function RegisterPage() {
                   value={form.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className={`w-full bg-brand.card border rounded-lg p-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 ${
+                  className={`w-full bg-white border rounded-lg p-3 pl-10 text-black placeholder-slate-400 focus:outline-none focus:ring-2 ${
                     errors.email ? 'border-red-500 focus:ring-red-500' : 'border-brand.border focus:ring-accent'
                   }`}
                 />
@@ -161,7 +161,7 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className={`w-full bg-brand.card border rounded-lg p-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 ${
+                  className={`w-full bg-white border rounded-lg p-3 pl-10 text-black placeholder-slate-400 focus:outline-none focus:ring-2 ${
                     errors.password ? 'border-red-500 focus:ring-red-500' : 'border-brand.border focus:ring-accent'
                   }`}
                 />
@@ -184,7 +184,7 @@ export default function RegisterPage() {
                   value={form.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className={`w-full bg-brand.card border rounded-lg p-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 ${
+                  className={`w-full bg-white border rounded-lg p-3 pl-10 text-black placeholder-slate-400 focus:outline-none focus:ring-2 ${
                     errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'border-brand.border focus:ring-accent'
                   }`}
                 />

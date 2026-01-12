@@ -18,7 +18,7 @@ const getApiBaseUrl = () => {
   }
   
   // If running on a remote host (codespace), construct the backend URL
-  // Replace the frontend port (5173, 5175, etc) with backend port 3002
+  // Replace the frontend port (1573, 5173, etc) with backend port 3002
   if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
     const backendUrl = `http://${hostname}:3002`;
     console.log('[API Config] Using remote backend:', backendUrl);
