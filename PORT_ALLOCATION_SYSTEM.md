@@ -20,6 +20,7 @@ Your Minecraft server hosting platform is properly configured with static port a
 ### **Environment URLs** 🌐
 
 #### Local Development
+
 ```bash
 Frontend:      http://localhost:1573
 Backend API:   http://localhost:3002
@@ -42,6 +43,7 @@ File Server:   https://crispy-doodle-x56wwp77w59x3vq9p-8888.app.github.dev/
 ## Minecraft Server Static Port Allocation
 
 ### 1. **Sequential Port Allocation** ✅
+
 - **File**: `/workspaces/Check/backend/lib/provisioning.js`
 - **Function**: `allocateServerPort(userId)`
 - **Port Range**: 25565 - 26000 (436 available ports)
@@ -74,6 +76,7 @@ const allocateServerPort = async (userId) => {
 ```
 
 ### 2. **Database Port Storage** ✅
+
 - **File**: `/workspaces/Check/backend/prisma/schema.prisma`
 - **Model**: Server
 - **Field**: `port: Int @unique`
@@ -91,6 +94,7 @@ model Server {
 ```
 
 ### 3. **Docker HostPort Binding** ✅
+
 - **File**: `/workspaces/Check/backend/lib/dockerProvisioner.js`
 - **Function**: `launchMinecraftServer(serverConfig)`
 - **Lines**: 147-157 (HostConfig.PortBindings)
