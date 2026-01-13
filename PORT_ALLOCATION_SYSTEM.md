@@ -152,6 +152,7 @@ sudo ufw allow 25566/tcp
 ```
 
 ### Windows
+
 1. Open **Windows Defender Firewall** → Advanced Settings
 2. Create **New Inbound Rule** for port range 25565-26000
 3. Protocol: TCP
@@ -194,12 +195,14 @@ Your system is ready for production. Ports will never change randomly again!
 ## 🚀 Quick Start Guide
 
 ### Option 1: Automated (Recommended)
+
 ```bash
 cd /workspaces/Check
 ./start-servers.sh
 ```
 
 This will:
+
 - ✅ Start PostgreSQL database
 - ✅ Start Backend API (port 3002)
 - ✅ Start Frontend (port 1573)
@@ -248,12 +251,14 @@ docker-compose up -d
 ## 🔍 Health Checks
 
 ### Test Backend API
+
 ```bash
 curl http://localhost:3002/api/health
 # Response: {"message":"Backend is running","port":"3002"}
 ```
 
 ### Test Frontend
+
 ```bash
 curl http://localhost:1573
 # Response: HTML dashboard page
@@ -267,6 +272,7 @@ socket.on('connect', () => console.log('✅ Connected'));
 ```
 
 ### Test File Server
+
 ```bash
 curl http://localhost:8888/api/health
 # Response: {"message":"File server is running","port":"8888"}
@@ -284,7 +290,7 @@ psql postgresql://lighth:lighth_dev_password_123@localhost:5432/lighth -c "SELEC
 
 ### Backend (`.env`)
 
-```bash
+```text
 # Core
 NODE_ENV=development
 PORT=5000
@@ -311,6 +317,7 @@ LIGHTH_DATA_PATH=/var/lib/lighth/data
 ```
 
 ### Frontend (Hardcoded Defaults)
+
 - Detects backend from hostname:port
 - Localhost → `http://localhost:3002`
 - Codespace → `http://{codespace-domain}:3002`
