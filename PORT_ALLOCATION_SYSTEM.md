@@ -9,7 +9,7 @@ Your Minecraft server hosting platform is properly configured with static port a
 ### **LightNode Complete Port Map** 🗺️
 
 | # | Service | Port | Process | Type | Purpose | Status |
-|---|---------|------|---------|------|---------|--------|
+| --- | --- | --- | --- | --- | --- | --- |
 | **1** | **Frontend (Vite React)** | **1573** | `npm run dev` | HTTP | Dashboard, UI, Server Management | ✅ Running |
 | **2** | **Backend API (Express)** | **3002** | `npm start` | HTTP/WS | Authentication, REST API, WebSocket | ✅ Running |
 | **3** | **PostgreSQL Database** | **5432** | `service postgresql` | TCP | Data Persistence, Server Records | ✅ Running |
@@ -20,7 +20,7 @@ Your Minecraft server hosting platform is properly configured with static port a
 ### **Environment URLs** 🌐
 
 #### Local Development
-```
+```bash
 Frontend:      http://localhost:1573
 Backend API:   http://localhost:3002
 WebSocket:     ws://localhost:7777
@@ -30,7 +30,7 @@ PostgreSQL:    postgresql://localhost:5432/lighth
 
 #### GitHub Codespaces (Published Ports)
 
-```
+```text
 Frontend:      https://crispy-doodle-x56wwp77w59x3vq9p-1573.app.github.dev/
 Backend API:   https://crispy-doodle-x56wwp77w59x3vq9p-3002.app.github.dev/
 WebSocket:     wss://crispy-doodle-x56wwp77w59x3vq9p-7777.app.github.dev/
@@ -304,7 +304,6 @@ DOCKER_SOCKET=/var/run/docker.sock
 LIGHTH_DATA_PATH=/var/lib/lighth/data
 ```
 
-
 ### Frontend (Hardcoded Defaults)
 - Detects backend from hostname:port
 - Localhost → `http://localhost:3002`
@@ -323,7 +322,6 @@ lsof -i :3002
 # Kill process
 kill -9 <PID>
 ```
-
 
 ### Backend won't start
 
@@ -356,7 +354,7 @@ psql -U postgres -l | grep lighth
 
 ## 📊 Port Usage Summary
 
-```
+```text
 Total Ports Used: 5 system services + up to 436 Minecraft servers
 Max Concurrent Connections: Unlimited
 Port Allocation Strategy: Sequential (25565 → 26000)
