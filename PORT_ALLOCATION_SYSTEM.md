@@ -47,7 +47,7 @@ File Server:   https://crispy-doodle-x56wwp77w59x3vq9p-8888.app.github.dev/
 - **File**: `/workspaces/Check/backend/lib/provisioning.js`
 - **Function**: `allocateServerPort(userId)`
 - **Port Range**: 25565 - 26000 (436 available ports)
-- **Strategy**: 
+- **Strategy**:
   - Checks database for used ports (via `@unique` constraint)
   - Verifies ports aren't in use by other system processes
   - Returns first available port sequentially
@@ -130,12 +130,12 @@ HostConfig: {
 ## How It Prevents Random Ports
 
 | Step | What Happens | File | Result |
-|------|-------------|------|--------|
-| **1. User Creates Server** | Request arrives to endpoint | `serverController.js` | Server creation initiated |
-| **2. Port Reserved** | Sequential scan finds first available port (25565+) | `provisioning.js` | Unique port allocated (e.g., 25566) |
-| **3. Docker Container Created** | HostPort explicitly set to allocated port | `dockerProvisioner.js` | Docker binds that exact port, no random assignment |
-| **4. Database Saved** | Port stored with server record | `schema.prisma` (@unique) | No duplicate ports possible |
-| **5. Dashboard Loads** | Reads port from database | `serverController.js` | Always shows correct port |
+| --- | --- | --- | --- |
+| **1. User Creates Server** | Request arrives | `serverController.js` | Created |
+| **2. Port Reserved** | Sequential scan finds available | `provisioning.js` | Allocated |
+| **3. Docker Container** | HostPort set to allocated port | `dockerProvisioner.js` | Bound |
+| **4. Database Saved** | Port stored with record | `schema.prisma` @unique | Unique |
+| **5. Dashboard Loads** | Reads port from database | `serverController.js` | Correct |
 
 ## Firewall Setup
 
@@ -213,6 +213,7 @@ This will:
 ### Option 2: Manual Start (Individual Services)
 
 **Terminal 1 - Backend API:**
+
 ```bash
 cd /workspaces/Check/backend
 npm start
@@ -220,6 +221,7 @@ npm start
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 cd /workspaces/Check
 npm run dev
@@ -227,6 +229,7 @@ npm run dev
 ```
 
 **Terminal 3 - WebSocket Server (Optional):**
+
 ```bash
 cd /workspaces/Check/backend
 node websocket-server.js
@@ -234,6 +237,7 @@ node websocket-server.js
 ```
 
 **Terminal 4 - File Server (Optional):**
+
 ```bash
 cd /workspaces/Check/backend
 node file-server.js
