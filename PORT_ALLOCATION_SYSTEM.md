@@ -116,6 +116,7 @@ HostConfig: {
 ```
 
 ### 4. **Server Creation Flow** ✅
+
 - **File**: `/workspaces/Check/backend/src/controllers/serverController.js`
 - **Function**: `createServer(req, res)`
 - **Process**:
@@ -141,6 +142,7 @@ HostConfig: {
 After allocation, ensure your firewall allows the server:
 
 ### Linux (Ubuntu/Debian)
+
 ```bash
 # Allow Minecraft port range
 sudo ufw allow 25565:26000/tcp
