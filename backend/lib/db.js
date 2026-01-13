@@ -1,19 +1,42 @@
 /**
  * Database Connection Bridge (lib/db.js)
  * 
- * DEVELOPMENT MODE: Uses in-memory mock database (mockDb.js)
- * This allows testing without PostgreSQL
+ * This file creates a single instance of Prisma Client
+ * that is reused throughout the application.
  * 
- * TODO: Switch to Prisma + PostgreSQL for production
+ * In development, it prevents multiple instances from being created
+ * which can exhaust database connections.
  */
 
-// Use mock database for development (no PostgreSQL required)
-const prisma = require('./mockDb');
+const { PrismaClient } = require('@prisma/client');
 
-// Log database status
-if (process.env.NODE_ENV === 'development') {
-  console.log('[Database] Using in-memory mock database for development');
-  console.log('[Database] Demo account: test@lighth.io / test123456');
+// Create a global variable to store the Prisma instance
+const globalForPrisma = global;
+
+// Create or reuse existing Prisma Client
+const prisma = globalForPrisma.prisma || new PrismaClient({
+  log: process.env.NODE_ENV === 'development' 
+    ? ['query', 'error', 'warn'] 
+    : ['error'],
+});
+
+// In development, store the instance globally to prevent multiple instantiations
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
 }
+
+/**
+ * Handle graceful shutdown
+ * Disconnect Prisma when the process exits
+ */
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
 
 module.exports = prisma;

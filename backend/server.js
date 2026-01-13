@@ -13,26 +13,42 @@ const SOCKET_PORT = process.env.SOCKET_PORT || 3002;
 // Middleware
 const corsOptions = {
   origin: (origin, callback) => {
+    // Allow no origin (like curl or mobile)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
     // Allow localhost
-    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      callback(null, true);
-    } 
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
     // Allow codespace domains (ends with .app.github.dev)
-    else if (origin && origin.includes('.app.github.dev')) {
-      callback(null, true);
+    if (origin.includes('.app.github.dev')) {
+      return callback(null, true);
     }
+    
     // Allow any origin in development (can be restricted in production)
-    else {
-      callback(null, true);
-    }
+    callback(null, true);
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 app.use(cors(corsOptions));
 
+// Trust proxy - important for codespace and production deployments
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} - Origin: ${req.get('origin') || 'none'}`);
+  next();
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -40,7 +56,7 @@ app.use('/api/servers', serverRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ message: 'Backend is running' });
+  res.status(200).json({ message: 'Backend is running', port: SOCKET_PORT });
 });
 
 // 404 handler
@@ -50,8 +66,8 @@ app.use((req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ message: 'Internal server error' });
+  console.error('[Error]', err);
+  res.status(500).json({ message: 'Internal server error', error: err.message });
 });
 
 // ============================================================================
@@ -87,3 +103,13 @@ httpServer.listen(SOCKET_PORT, '0.0.0.0', () => {
   console.log(`   - console-input                     - Send command to server`);
   console.log(`   - console-error                     - Console error messages\n`);
 });
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  httpServer.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+

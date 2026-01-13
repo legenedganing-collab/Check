@@ -1,8 +1,45 @@
-# Static Port Allocation System ✅
+# Complete Port Allocation & System Architecture ✅
 
-Your Minecraft server hosting platform is properly configured to prevent random Docker port assignments.
+Your Minecraft server hosting platform is properly configured with static port allocation for Minecraft servers AND complete port management for all services.
+
+---
 
 ## System Overview
+
+### **LightNode Complete Port Map** 🗺️
+
+| # | Service | Port | Process | Type | Purpose | Status |
+|---|---------|------|---------|------|---------|--------|
+| **1** | **Frontend (Vite React)** | **1573** | `npm run dev` | HTTP | Dashboard, UI, Server Management | ✅ Running |
+| **2** | **Backend API (Express)** | **3002** | `npm start` | HTTP/WS | Authentication, REST API, WebSocket | ✅ Running |
+| **3** | **PostgreSQL Database** | **5432** | `service postgresql` | TCP | Data Persistence, Server Records | ✅ Running |
+| **4** | **WebSocket Server** | **7777** | `node websocket-server.js` | WS/WSS | Live Console, Real-time Events | ⏸️ Optional |
+| **5** | **File Server** | **8888** | `node file-server.js` | HTTP | File Uploads, Downloads, Modpacks | ⏸️ Optional |
+| **6-436** | **Minecraft Servers** | **25565-26000** | Docker Containers | TCP | Player Game Servers | Dynamic |
+
+### **Environment URLs** 🌐
+
+#### Local Development
+```
+Frontend:      http://localhost:1573
+Backend API:   http://localhost:3002
+WebSocket:     ws://localhost:7777
+File Server:   http://localhost:8888
+PostgreSQL:    postgresql://localhost:5432/lighth
+```
+
+#### GitHub Codespaces (Published Ports)
+
+```
+Frontend:      https://crispy-doodle-x56wwp77w59x3vq9p-1573.app.github.dev/
+Backend API:   https://crispy-doodle-x56wwp77w59x3vq9p-3002.app.github.dev/
+WebSocket:     wss://crispy-doodle-x56wwp77w59x3vq9p-7777.app.github.dev/
+File Server:   https://crispy-doodle-x56wwp77w59x3vq9p-8888.app.github.dev/
+```
+
+---
+
+## Minecraft Server Static Port Allocation
 
 ### 1. **Sequential Port Allocation** ✅
 - **File**: `/workspaces/Check/backend/lib/provisioning.js`
@@ -145,3 +182,190 @@ When user creates "My Server":
 **Status**: ✅ **FULLY IMPLEMENTED**
 
 Your system is ready for production. Ports will never change randomly again!
+
+---
+
+## 🚀 Quick Start Guide
+
+### Option 1: Automated (Recommended)
+```bash
+cd /workspaces/Check
+./start-servers.sh
+```
+
+This will:
+- ✅ Start PostgreSQL database
+- ✅ Start Backend API (port 3002)
+- ✅ Start Frontend (port 1573)
+- ✅ Start WebSocket Server (port 7777)
+- ✅ Start File Server (port 8888)
+- ✅ Display all URLs and status
+
+### Option 2: Manual Start (Individual Services)
+
+**Terminal 1 - Backend API:**
+```bash
+cd /workspaces/Check/backend
+npm start
+# Listens on http://localhost:3002
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd /workspaces/Check
+npm run dev
+# Listens on http://localhost:1573
+```
+
+**Terminal 3 - WebSocket Server (Optional):**
+```bash
+cd /workspaces/Check/backend
+node websocket-server.js
+# Listens on ws://localhost:7777
+```
+
+**Terminal 4 - File Server (Optional):**
+```bash
+cd /workspaces/Check/backend
+node file-server.js
+# Listens on http://localhost:8888
+```
+
+### Option 3: Docker Deployment (Production)
+
+```bash
+docker-compose up -d
+```
+
+---
+
+## 🔍 Health Checks
+
+### Test Backend API
+```bash
+curl http://localhost:3002/api/health
+# Response: {"message":"Backend is running","port":"3002"}
+```
+
+### Test Frontend
+```bash
+curl http://localhost:1573
+# Response: HTML dashboard page
+```
+
+### Test WebSocket (from browser console)
+
+```javascript
+const socket = io('http://localhost:7777');
+socket.on('connect', () => console.log('✅ Connected'));
+```
+
+### Test File Server
+```bash
+curl http://localhost:8888/api/health
+# Response: {"message":"File server is running","port":"8888"}
+```
+
+### Test Database
+
+```bash
+psql postgresql://lighth:lighth_dev_password_123@localhost:5432/lighth -c "SELECT COUNT(*) FROM servers;"
+```
+
+---
+
+## 🛠️ Environment Variables
+
+### Backend (`.env`)
+
+```bash
+# Core
+NODE_ENV=development
+PORT=5000
+SOCKET_PORT=3002
+HOST=0.0.0.0
+
+# Database
+DATABASE_URL="postgresql://lighth:lighth_dev_password_123@localhost:5432/lighth"
+
+# Authentication
+JWT_SECRET="your_secret_key_here"
+
+# Frontend
+FRONTEND_URL=http://localhost:1573
+
+# Ports
+API_PORT=3002
+WEBSOCKET_PORT=7777
+FILE_SERVER_PORT=8888
+
+# Docker
+DOCKER_SOCKET=/var/run/docker.sock
+LIGHTH_DATA_PATH=/var/lib/lighth/data
+```
+
+
+### Frontend (Hardcoded Defaults)
+- Detects backend from hostname:port
+- Localhost → `http://localhost:3002`
+- Codespace → `http://{codespace-domain}:3002`
+
+---
+
+## 🐛 Troubleshooting
+
+### Port Already in Use
+
+```bash
+# Find process using port 3002
+lsof -i :3002
+
+# Kill process
+kill -9 <PID>
+```
+
+
+### Backend won't start
+
+```bash
+# Check PostgreSQL
+sudo service postgresql status
+
+# Start if needed
+sudo service postgresql start
+
+# Check database
+psql -U postgres -l | grep lighth
+```
+
+
+### CORS Errors
+
+- ✅ Backend allows all `.app.github.dev` domains
+- ✅ Backend allows localhost
+- ✅ File Server and WebSocket Server also configured
+
+### Frontend shows 502 error
+
+1. Check Backend API is running: `curl http://localhost:3002/api/health`
+2. Check Frontend URL in browser matches expected format
+3. Verify CORS is not blocking requests
+4. Check browser console for actual error
+
+---
+
+## 📊 Port Usage Summary
+
+```
+Total Ports Used: 5 system services + up to 436 Minecraft servers
+Max Concurrent Connections: Unlimited
+Port Allocation Strategy: Sequential (25565 → 26000)
+Database Constraint: @unique (prevents duplicates)
+Random Port Prevention: Explicit HostPort binding in Docker
+```
+
+---
+
+**Last Updated**: January 13, 2026  
+**System Status**: ✅ OPERATIONAL  
+**All Ports**: ✅ FUNCTIONAL

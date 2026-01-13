@@ -18,13 +18,35 @@ const fs = require('fs').promises;
 const cors = require('cors');
 
 const app = express();
-const PORT = 8888;
+const PORT = process.env.FILE_SERVER_PORT || 8888;
 
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:1573', 'http://10.0.4.186:1573'],
+// Middleware - CORS Configuration
+const corsOrigins = process.env.FRONTEND_URL 
+  ? [process.env.FRONTEND_URL]
+  : ['http://localhost:1573', 'http://10.0.4.186:1573'];
+
+// Add codespace domain pattern to allowed origins
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow no origin (like mobile or curl)
+    if (!origin) return callback(null, true);
+    
+    // Check if in allowed list
+    if (corsOrigins.includes(origin)) return callback(null, true);
+    
+    // Allow codespace domains
+    if (origin.includes('.app.github.dev')) return callback(null, true);
+    
+    // Allow localhost
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) return callback(null, true);
+    
+    // Development: allow all
+    return callback(null, true);
+  },
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 

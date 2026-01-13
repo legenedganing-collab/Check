@@ -3,6 +3,7 @@
 ## Summary of Changes (January 12, 2026)
 
 ### 1. ✅ Design System & Tailwind Configuration
+
 - **File**: [tailwind.config.js](tailwind.config.js)
 - Updated with LightNode theme tokens:
   - Brand colors (darkest, darker, card, border)
@@ -14,20 +15,24 @@
 ### 2. ✅ Frontend Layout & Components
 
 #### Core Layout
+
 - [src/layouts/DashboardLayout.jsx](src/layouts/DashboardLayout.jsx) - Main shell with sidebar + topbar
 - [src/components/Sidebar.jsx](src/components/Sidebar.jsx) - Fixed left navigation
 - [src/components/Topbar.jsx](src/components/Topbar.jsx) - Top header with notifications
 
 #### Dashboard Components
+
 - [src/components/ServerCard.jsx](src/components/ServerCard.jsx) - Individual server card with status & memory bar
 - [src/components/ServerSwitcher.jsx](src/components/ServerSwitcher.jsx) - Dropdown to switch between servers
 - [src/components/FileManager.jsx](src/components/FileManager.jsx) - Full file explorer with breadcrumbs
 - [src/pages/Login.jsx](src/pages/Login.jsx) - Glassmorphic login page
 
 #### Updated Components
+
 - [src/components/Dashboard.jsx](src/components/Dashboard.jsx) - Refactored to use DashboardLayout, Zustand store, and integrate all UI components
 
 ### 3. ✅ State Management (Zustand)
+
 - **File**: [src/store/serverStore.js](src/store/serverStore.js)
 - Global server state with functions:
   - `fetchServers()` - Load all user servers from API
@@ -37,6 +42,7 @@
   - `removeServer(id)` - Delete server from list
 
 ### 4. ✅ Backend File Listing Endpoint
+
 - **File**: [backend/src/controllers/serverController.js](backend/src/controllers/serverController.js)
   - Added `getServerFiles(req, res)` function
   - Endpoint: `GET /api/servers/:id/files?path=/plugins`
@@ -50,12 +56,14 @@
   - Added route: `router.get('/:id/files', getServerFiles)`
 
 ### 5. ✅ Frontend Enhancements
+
 - **File**: [package.json](package.json)
   - Added `zustand@^4.4.0` for state management
 
 ### Key Features Implemented
 
 #### Dashboard UI
+
 - ✅ Responsive grid layout (sidebar + main content)
 - ✅ Server creation form integration
 - ✅ Server list with status indicators
@@ -64,6 +72,7 @@
 - ✅ File manager with breadcrumb navigation
 
 #### File Manager
+
 - ✅ Browse directories with breadcrumbs
 - ✅ File type icons (folders, configs, JSON, archives, logs)
 - ✅ Backend API integration with security checks
@@ -71,17 +80,20 @@
 - ✅ Directory navigation
 
 #### Security
+
 - ✅ JWT authentication on all endpoints
 - ✅ Owner verification (servers only accessible to their owner)
 - ✅ Directory traversal prevention (`../` checks)
 - ✅ Path validation (ensure within base directory)
 
 ### Build Status
+
 - ✅ Frontend builds without errors (Vite)
 - ✅ Backend syntax validated (Node.js)
 - ✅ All components integrated and working
 
 ### Next Steps
+
 1. Implement WebSocket console streaming (Socket.io)
 2. Add file upload/download functionality
 3. Implement user authentication (register/login endpoints)
@@ -91,7 +103,7 @@
 
 ### Architecture Flow
 
-```
+```text
 User → Login → Dashboard (DashboardLayout)
        ↓
        ├─ Sidebar (Navigation)
@@ -112,4 +124,5 @@ Backend Flow:
 ```
 
 ---
+
 All tests passed ✅ Ready for frontend/backend integration testing.

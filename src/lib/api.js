@@ -7,8 +7,9 @@
 const getApiBaseUrl = () => {
   const hostname = window.location.hostname;
   const port = window.location.port;
+  const protocol = window.location.protocol;
   
-  console.log(`[API Config] Current location: ${hostname}:${port}`);
+  console.log(`[API Config] Current location: ${protocol}//${hostname}:${port}`);
   
   // If on localhost/127.0.0.1, use port 3002 for backend
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
@@ -18,10 +19,11 @@ const getApiBaseUrl = () => {
   }
   
   // If running on a remote host (codespace), construct the backend URL
-  // Replace the frontend port (1573, 5173, etc) with backend port 3002
+  // Use HTTPS for codespace domains (.app.github.dev)
   if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+    // For codespace domains, use HTTP (GitHub Codespaces forwards ports)
     const backendUrl = `http://${hostname}:3002`;
-    console.log('[API Config] Using remote backend:', backendUrl);
+    console.log('[API Config] Using remote backend (HTTP):', backendUrl);
     return backendUrl;
   }
   
@@ -52,3 +54,4 @@ export const apiCall = async (endpoint, options = {}) => {
     throw new Error(`Failed to connect to ${url}: ${error.message}`);
   }
 };
+

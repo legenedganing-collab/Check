@@ -3,5 +3,11 @@
         "git add": true,
         "git commit": true,
         "awk": true
+    },
+    "github.copilot.advanced": {
+        "debug.overrideChatDefaultCommands": true
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python"
     }
 }
