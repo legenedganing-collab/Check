@@ -19,6 +19,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { io } from 'socket.io-client';
+import { useAuth } from '../context/AuthContext';
 import 'xterm/css/xterm.css';
 
 const ServerConsole = ({ serverId, onConnectionChange }) => {
@@ -27,6 +28,7 @@ const ServerConsole = ({ serverId, onConnectionChange }) => {
   const termRef = useRef(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
+  const { token } = useAuth();
 
   useEffect(() => {
     // Initialize xterm.js
@@ -70,7 +72,6 @@ const ServerConsole = ({ serverId, onConnectionChange }) => {
     termRef.current = term;
 
     // Initialize WebSocket connection
-    const token = localStorage.getItem('token');
     if (!token) {
       setError('No authentication token found');
       return;

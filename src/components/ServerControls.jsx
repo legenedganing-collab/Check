@@ -17,10 +17,12 @@
 import React, { useState } from 'react';
 import { Play, Square, RotateCw, Skull } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 const ServerControls = ({ serverId, currentStatus, onStatusChange }) => {
   const [loading, setLoading] = useState(false);
   const [localStatus, setLocalStatus] = useState(currentStatus);
+  const { token } = useAuth();
 
   // Update local status when prop changes
   React.useEffect(() => {
@@ -40,7 +42,6 @@ const ServerControls = ({ serverId, currentStatus, onStatusChange }) => {
     }
 
     setLoading(true);
-    const token = localStorage.getItem('token');
 
     try {
       console.log(`[Controls] Sending power action: ${action}`);

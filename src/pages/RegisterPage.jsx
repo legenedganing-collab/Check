@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Mail, Lock, User, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { apiCall } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     username: '',
@@ -57,28 +58,14 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await apiCall('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({
-          username: form.username,
-          email: form.email,
-          password: form.password
-        })
-      });
+      const result = await register(form.email, form.username, form.password);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        toast.error(data.message || 'Registration failed');
-        return;
+      if (result.success) {
+        toast.success('✅ Account created! Redirecting to dashboard...');
+        setTimeout(() => navigate('/dashboard'), 1000);
+      } else {
+        toast.error(result.message || 'Registration failed');
       }
-
-      // Store token and user info
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      toast.success('✅ Account created! Redirecting to dashboard...');
-      setTimeout(() => navigate('/dashboard'), 1000);
     } catch (error) {
       console.error('Register error:', error);
       toast.error('Connection error: ' + error.message);

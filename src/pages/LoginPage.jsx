@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { apiCall } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
 
@@ -24,24 +25,14 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await apiCall('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(form)
-      });
+      const result = await login(form.email, form.password);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        toast.error(data.message || 'Login failed');
-        return;
+      if (result.success) {
+        toast.success('✅ Logged in successfully!');
+        setTimeout(() => navigate('/dashboard'), 500);
+      } else {
+        toast.error(result.message || 'Login failed');
       }
-
-      // Store token and user info
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      toast.success('✅ Logged in successfully!');
-      setTimeout(() => navigate('/dashboard'), 500);
     } catch (error) {
       console.error('Login error:', error);
       toast.error('Connection error: ' + error.message);

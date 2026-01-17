@@ -1,8 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function ServerCard({ name, ip, status = 'offline', ram = 2 }) {
+export default function ServerCard({ id, name, ip, status = 'offline', ram = 2 }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    // Navigate to server management panel (Dashboard B)
+    navigate(`/server/${id}`);
+  };
+
   return (
-    <div className="bg-brand.card border border-brand.border rounded-2xl p-5 hover:border-accent/50 transition-all cursor-pointer group">
+    <div 
+      onClick={handleClick}
+      className="bg-brand.card border border-brand.border rounded-2xl p-5 hover:border-accent/50 transition-all cursor-pointer group"
+    >
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-bold group-hover:text-accent transition-colors">{name}</h3>

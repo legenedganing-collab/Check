@@ -3,15 +3,26 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import CreateServerForm from './CreateServerForm';
 import DeploymentSuccess from './DeploymentSuccess';
 import ServerCard from './ServerCard';
-import FileManager from './FileManager';
-import ServerSwitcher from './ServerSwitcher';
 import { useServerStore } from '../store/serverStore';
 import toast from 'react-hot-toast';
+
+/**
+ * Dashboard Component - Main Server Hub (Dashboard A)
+ * 
+ * Purpose: Entry point after login
+ * Features:
+ * - Display list of all user's servers
+ * - Create new server wizard
+ * - Server deployment success screen
+ * 
+ * User clicks "Manage" on a server card to navigate to ServerManager (Dashboard B)
+ * which handles specific server control (console, power, stats, files)
+ */
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState('servers');
   const [newServerData, setNewServerData] = useState(null);
-  const { servers, selectedServer, setSelectedServer, fetchServers, addServer } = useServerStore();
+  const { servers, fetchServers, addServer } = useServerStore();
 
   useEffect(() => {
     // Load servers on mount
@@ -66,6 +77,7 @@ const Dashboard = () => {
         />
       ) : (
         <div className="space-y-6">
+          {/* Header with title and create button */}
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">My Servers</h1>
             <button 
@@ -76,32 +88,21 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {servers.length > 0 && <ServerSwitcher />}
-
-          {selectedServer && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4">Console</h2>
-                  <div className="bg-brand.card rounded-lg border border-brand.border p-4 h-96 font-mono text-sm text-slate-300 overflow-auto">
-                    Console output will appear here...
-                  </div>
-                </div>
-                <FileManager serverId={selectedServer.id} />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold mb-4">Server Info</h2>
-                <ServerCard 
-                  name={selectedServer.name} 
-                  ip={selectedServer.ipAddress} 
-                  status={selectedServer.status} 
-                  ram={selectedServer.memory}
+          {/* Servers Grid */}
+          {servers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {servers.map((server) => (
+                <ServerCard
+                  key={server.id}
+                  id={server.id}
+                  name={server.name}
+                  ip={server.ipAddress}
+                  status={server.status}
+                  ram={server.memory}
                 />
-              </div>
+              ))}
             </div>
-          )}
-
-          {servers.length === 0 && (
+          ) : (
             <div className="text-center py-12">
               <p className="text-slate-400 mb-4">No servers yet. Create your first one!</p>
               <button 

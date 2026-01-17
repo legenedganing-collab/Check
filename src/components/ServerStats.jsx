@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { Cpu, HardDrive } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const ServerStats = ({ serverId }) => {
   const [stats, setStats] = useState({ cpu: '0', ram: 0, ramLimit: 0 });
+  const { token } = useAuth();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     const socket = io('http://localhost:3002', {
       auth: { token },
       query: { serverId }
@@ -21,7 +22,7 @@ const ServerStats = ({ serverId }) => {
     });
 
     return () => socket.disconnect();
-  }, [serverId]);
+  }, [serverId, token]);
 
   // Helper to format bytes to GB
   const formatBytes = (bytes) => (bytes / 1024 / 1024 / 1024).toFixed(2);
